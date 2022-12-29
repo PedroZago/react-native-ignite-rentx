@@ -3,69 +3,131 @@ import {
   NavigationProp,
   ParamListBase,
   useNavigation,
+  useRoute,
 } from '@react-navigation/native';
-import React from 'react';
+import { format } from 'date-fns';
+import React, { useState, useEffect } from 'react';
+import { Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
 import { useTheme } from 'styled-components';
 
-import AccelerationSvg from '../../assets/acceleration.svg';
-import ExchangeSvg from '../../assets/exchange.svg';
-import ForceSvg from '../../assets/force.svg';
-import GasolineSvg from '../../assets/gasoline.svg';
-import PeopleSvg from '../../assets/people.svg';
-import SpeedSvg from '../../assets/speed.svg';
 import { Accessories } from '../../components/Accessories';
 import { BackButton } from '../../components/BackButton';
 import { Button } from '../../components/Button';
 import { ImageSlider } from '../../components/ImageSlider';
+import { CardDTO } from '../../dtos/CardDTO';
+import { api } from '../../services/api';
+import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
+import { getPlatformDate } from '../../utils/getPlatformDate';
 import * as S from './styles';
 
-interface SchedulingDetailsProps {}
+interface SchedulingDetailsParams {
+  car: CardDTO;
+  dates: string[];
+}
 
-export const SchedulingDetails: React.FC<SchedulingDetailsProps> = () => {
+interface RentalPeriod {
+  start: string;
+  end: string;
+}
+
+export const SchedulingDetails = () => {
+  const [loading, setLoading] = useState(false);
+  const [rentalPeriod, setRentalPeriod] = useState<RentalPeriod>(
+    {} as RentalPeriod
+  );
+
   const theme = useTheme();
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-  const handleConfirmRental = () => {
-    navigation.navigate('SchedulingComplete');
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const route = useRoute();
+  const { car, dates } = route.params as SchedulingDetailsParams;
+
+  const handleConfirmRental = async () => {
+    try {
+      setLoading(true);
+
+      const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`);
+
+      const unavailable_dates = [
+        ...schedulesByCar.data.unavailable_dates,
+        ...dates,
+      ];
+
+      await api.post('/schedules_byuser', {
+        user_id: 1,
+        car,
+        startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+        endDate: format(
+          getPlatformDate(new Date(dates[dates.length - 1])),
+          'dd/MM/yyyy'
+        ),
+      });
+
+      await api.put(`/schedules_bycars/${car.id}`, {
+        id: car.id,
+        unavailable_dates,
+      });
+
+      navigation.navigate('SchedulingComplete');
+    } catch (error) {
+      Alert.alert('Não foi possível confirmar o agendamento.');
+      console.log(error);
+      setLoading(false);
+    }
   };
+
+  const handleGoBack = () => navigation.goBack();
+
+  const rentTotal = dates.length * car.rent.price;
+
+  useEffect(() => {
+    setRentalPeriod({
+      start: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+      end: format(
+        getPlatformDate(new Date(dates[dates.length - 1])),
+        'dd/MM/yyyy'
+      ),
+    });
+  }, []);
 
   return (
     <S.Container>
       <S.Header>
-        <BackButton />
+        <BackButton onPress={handleGoBack} />
       </S.Header>
 
       <S.CarImages>
-        <ImageSlider
-          imagesUrl={[
-            'https://png.monster/wp-content/uploads/2020/11/2018-audi-rs5-4wd-coupe-angular-front-5039562b.png',
-          ]}
-        />
+        <ImageSlider imagesUrl={car.photos} />
       </S.CarImages>
 
       <S.Content>
         <S.Details>
           <S.Description>
-            <S.Brand>Lamborghini</S.Brand>
+            <S.Brand>{car.brand}</S.Brand>
 
-            <S.Name>Huracan</S.Name>
+            <S.Name>{car.name}</S.Name>
           </S.Description>
 
           <S.Rent>
-            <S.Period>Ao dia</S.Period>
+            <S.Period>{car.rent.period}</S.Period>
 
-            <S.Price>R$ 580</S.Price>
+            <S.Price>
+              {`R$ ${car.rent.price.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+              })}`}
+            </S.Price>
           </S.Rent>
         </S.Details>
 
         <S.CarAccessories>
-          <Accessories name="380Km/h" icon={SpeedSvg} />
-          <Accessories name="3.2s" icon={AccelerationSvg} />
-          <Accessories name="800 HP" icon={ForceSvg} />
-          <Accessories name="Gasolina" icon={GasolineSvg} />
-          <Accessories name="Auto" icon={ExchangeSvg} />
-          <Accessories name="2 pessoas" icon={PeopleSvg} />
+          {car.accessories.map(accessory => (
+            <Accessories
+              key={accessory.type}
+              name={accessory.name}
+              icon={getAccessoryIcon(accessory.type)}
+            />
+          ))}
         </S.CarAccessories>
 
         <S.RentalPeriod>
@@ -79,7 +141,7 @@ export const SchedulingDetails: React.FC<SchedulingDetailsProps> = () => {
 
           <S.DateInfo>
             <S.DateTitle>DE</S.DateTitle>
-            <S.DateValue>18/06/2001</S.DateValue>
+            <S.DateValue>{rentalPeriod.start}</S.DateValue>
           </S.DateInfo>
 
           <Feather
@@ -90,7 +152,7 @@ export const SchedulingDetails: React.FC<SchedulingDetailsProps> = () => {
 
           <S.DateInfo>
             <S.DateTitle>ATÉ</S.DateTitle>
-            <S.DateValue>25/06/2001</S.DateValue>
+            <S.DateValue>{rentalPeriod.end}</S.DateValue>
           </S.DateInfo>
         </S.RentalPeriod>
 
@@ -98,9 +160,13 @@ export const SchedulingDetails: React.FC<SchedulingDetailsProps> = () => {
           <S.RentalPriceLabel>TOTAL</S.RentalPriceLabel>
 
           <S.RentalPriceDetails>
-            <S.RentalPriceQuota>R$ 580 x3 diárias</S.RentalPriceQuota>
+            <S.RentalPriceQuota>{`R$ ${car.rent.price} x${dates.length} diárias`}</S.RentalPriceQuota>
 
-            <S.RentalPriceTotal>R$ 2.900</S.RentalPriceTotal>
+            <S.RentalPriceTotal>
+              {`R$ ${rentTotal.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+              })}`}
+            </S.RentalPriceTotal>
           </S.RentalPriceDetails>
         </S.RentalPrice>
       </S.Content>
@@ -110,6 +176,8 @@ export const SchedulingDetails: React.FC<SchedulingDetailsProps> = () => {
           title="Alugar agora"
           onPress={handleConfirmRental}
           color={theme.colors.success}
+          enabled={!loading}
+          loading={loading}
         />
       </S.Footer>
     </S.Container>

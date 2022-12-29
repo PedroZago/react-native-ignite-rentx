@@ -10,8 +10,8 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ imagesUrl }) => {
   return (
     <S.Container>
       <S.ImageIndexes>
-        <S.ImageIndex active={false} />
         <S.ImageIndex active={true} />
+        <S.ImageIndex active={false} />
         <S.ImageIndex active={false} />
         <S.ImageIndex active={false} />
       </S.ImageIndexes>
