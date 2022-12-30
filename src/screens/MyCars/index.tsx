@@ -11,6 +11,7 @@ import { useTheme } from 'styled-components';
 import { BackButton } from '../../components/BackButton';
 import { Car } from '../../components/Car';
 import { Load } from '../../components/Load';
+import { LoadAnimation } from '../../components/LoadAnimation';
 import { CardDTO } from '../../dtos/CardDTO';
 import { api } from '../../services/api';
 import * as S from './styles';
@@ -96,7 +97,7 @@ export const MyCars = () => {
       </S.Header>
 
       {loading ? (
-        <Load />
+        <LoadAnimation />
       ) : (
         <S.Content>
           <S.Appointment>

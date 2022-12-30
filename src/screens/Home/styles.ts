@@ -1,8 +1,12 @@
 import { FlatList, FlatListProps, Text, View } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
+import Animated from 'react-native-reanimated';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
 import { CardDTO } from '../../dtos/CardDTO';
+
+const ButtonAnimated = Animated.createAnimatedComponent(RectButton);
 
 export const Container = styled(View)`
   flex: 1;
@@ -41,3 +45,21 @@ export const CarList = styled(
   },
   showsVerticalScrollIndicator: false,
 } as FlatListProps<CardDTO>)``;
+
+export const ButtonContainer = styled(Animated.View)`
+  position: absolute;
+  bottom: 13px;
+  right: 22px;
+`;
+
+export const Button = styled(ButtonAnimated)`
+  width: 60px;
+  height: 60px;
+
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 30px;
+
+  background-color: ${({ theme }) => theme.colors.main};
+`;

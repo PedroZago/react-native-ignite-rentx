@@ -4,7 +4,15 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
+import {
+  Extrapolate,
+  interpolate,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from 'react-native-reanimated';
 
 import { Accessories } from '../../components/Accessories';
 import { BackButton } from '../../components/BackButton';
@@ -23,25 +31,51 @@ export const CarDetails = () => {
   const route = useRoute();
   const { car } = route.params as CarDetailsParams;
 
-  const handleConfirmRental = () => {
-    navigation.navigate('Scheduling', { car });
-  };
+  const scrollY = useSharedValue(0);
 
-  const handleGoBack = () => {
-    navigation.goBack();
-  };
+  const scrollHandler = useAnimatedScrollHandler(event => {
+    scrollY.value = event.contentOffset.y;
+    console.log(event.contentOffset.y);
+  });
+
+  const headerStyleAnimation = useAnimatedStyle(() => {
+    return {
+      height: interpolate(
+        scrollY.value,
+        [0, 200],
+        [200, 70],
+        Extrapolate.CLAMP
+      ),
+    };
+  });
+
+  const sliderCarsStyleAnimation = useAnimatedStyle(() => {
+    return {
+      opacity: interpolate(scrollY.value, [0, 150], [1, 0], Extrapolate.CLAMP),
+    };
+  });
+
+  const handleConfirmRental = () => navigation.navigate('Scheduling', { car });
+
+  const handleGoBack = () => navigation.goBack();
 
   return (
     <S.Container>
-      <S.Header>
-        <BackButton onPress={handleGoBack} />
-      </S.Header>
+      <StatusBar style="dark" backgroundColor="transparent" translucent />
 
-      <S.CarImages>
-        <ImageSlider imagesUrl={car.photos} />
-      </S.CarImages>
+      <S.TopContent style={[headerStyleAnimation]}>
+        <S.Header>
+          <BackButton onPress={handleGoBack} />
+        </S.Header>
 
-      <S.Content>
+        <S.AnimatedViewCarImages style={[sliderCarsStyleAnimation]}>
+          <S.CarImages>
+            <ImageSlider imagesUrl={car.photos} />
+          </S.CarImages>
+        </S.AnimatedViewCarImages>
+      </S.TopContent>
+
+      <S.Content onScroll={scrollHandler} scrollEventThrottle={16}>
         <S.Details>
           <S.Description>
             <S.Brand>{car.brand}</S.Brand>
