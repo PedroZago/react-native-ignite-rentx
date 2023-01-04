@@ -1,6 +1,7 @@
 import React, { useRef, useState } from 'react';
 import { ListRenderItem, ViewToken } from 'react-native';
 
+import { Bullet } from '../Bullet';
 import * as S from './styles';
 
 interface ImageSliderProps {
@@ -37,7 +38,7 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ imagesUrl }) => {
     <S.Container>
       <S.ImageIndexes>
         {imagesUrl.map((_, index) => (
-          <S.ImageIndex key={String(index)} active={index === imageIndex} />
+          <Bullet key={String(index)} active={index === imageIndex} />
         ))}
       </S.ImageIndexes>
 
