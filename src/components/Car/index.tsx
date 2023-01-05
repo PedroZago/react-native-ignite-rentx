@@ -1,7 +1,6 @@
 import React from 'react';
 import { TouchableOpacityProps } from 'react-native';
 
-import GasolineSvg from '../../assets/gasoline.svg';
 import { CardDTO } from '../../dtos/CardDTO';
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import * as S from './styles';
@@ -22,9 +21,9 @@ export const Car: React.FC<CarProps> = ({ data, ...rest }) => {
 
         <S.About>
           <S.Rent>
-            <S.Period>{data.rent.period}</S.Period>
+            <S.Period>{data.period}</S.Period>
 
-            <S.Price>{`R$ ${data.rent.price}`}</S.Price>
+            <S.Price>{`R$ ${data.price}`}</S.Price>
           </S.Rent>
 
           <S.Type>

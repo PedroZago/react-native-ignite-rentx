@@ -17,12 +17,14 @@ import * as Yup from 'yup';
 import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { PasswordInput } from '../../components/PasswordInput';
+import { useAuth } from '../../hooks/auth';
 import * as S from './styles';
 
 export const SignIn = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const theme = useTheme();
+  const { signIn } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,6 +41,8 @@ export const SignIn = () => {
       });
 
       await schema.validate({ email, password });
+
+      signIn({ email, password });
     } catch (error) {
       console.log(error);
       if (error instanceof Yup.ValidationError) {

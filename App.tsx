@@ -11,6 +11,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { ThemeProvider } from 'styled-components';
 
+import { AppProvider } from './src/hooks';
 import Routes from './src/routes';
 import theme from './src/styles/theme';
 
@@ -51,8 +52,10 @@ export default function App() {
   return (
     <GestureHandlerRootView onLayout={onLayoutRootView} style={{ flex: 1 }}>
       <ThemeProvider theme={theme}>
-        <StatusBar style="light" backgroundColor="transparent" translucent />
-        <Routes />
+        <AppProvider>
+          <StatusBar style="light" backgroundColor="transparent" translucent />
+          <Routes />
+        </AppProvider>
       </ThemeProvider>
     </GestureHandlerRootView>
   );

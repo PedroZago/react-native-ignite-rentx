@@ -35,7 +35,6 @@ export const CarDetails = () => {
 
   const scrollHandler = useAnimatedScrollHandler(event => {
     scrollY.value = event.contentOffset.y;
-    console.log(event.contentOffset.y);
   });
 
   const headerStyleAnimation = useAnimatedStyle(() => {
@@ -84,10 +83,10 @@ export const CarDetails = () => {
           </S.Description>
 
           <S.Rent>
-            <S.Period>{car.rent.period}</S.Period>
+            <S.Period>{car.period}</S.Period>
 
             <S.Price>
-              {`R$ ${car.rent.price.toLocaleString('pt-BR', {
+              {`R$ ${car.price.toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
               })}`}
             </S.Price>

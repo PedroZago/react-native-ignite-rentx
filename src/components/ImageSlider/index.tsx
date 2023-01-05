@@ -4,12 +4,17 @@ import { ListRenderItem, ViewToken } from 'react-native';
 import { Bullet } from '../Bullet';
 import * as S from './styles';
 
+export type Photo = {
+  id: string;
+  photo: string;
+};
+
 interface ImageSliderProps {
-  imagesUrl: string[];
+  imagesUrl: Photo[];
 }
 
 interface ListItemProps {
-  data: string;
+  data: Photo;
 }
 
 interface ChangeImageProps {
@@ -27,24 +32,24 @@ export const ImageSlider: React.FC<ImageSliderProps> = ({ imagesUrl }) => {
 
   const ListItem = ({ data }: ListItemProps) => (
     <S.CarImageWrapper>
-      <S.CarImage source={{ uri: data }} resizeMode="contain" />
+      <S.CarImage source={{ uri: data.photo }} resizeMode="contain" />
     </S.CarImageWrapper>
   );
 
-  const renderItem: ListRenderItem<string> = ({ item }) => (
+  const renderItem: ListRenderItem<Photo> = ({ item }) => (
     <ListItem data={item} />
   );
   return (
     <S.Container>
       <S.ImageIndexes>
-        {imagesUrl.map((_, index) => (
-          <Bullet key={String(index)} active={index === imageIndex} />
+        {imagesUrl.map((item, index) => (
+          <Bullet key={String(item.id)} active={index === imageIndex} />
         ))}
       </S.ImageIndexes>
 
       <S.Carousel
         data={imagesUrl}
-        keyExtractor={item => item}
+        keyExtractor={item => item.id}
         renderItem={renderItem}
         onViewableItemsChanged={indexChanged.current}
       />

@@ -19,6 +19,7 @@ import { BackButton } from '../../../components/BackButton';
 import { Bullet } from '../../../components/Bullet';
 import { Button } from '../../../components/Button';
 import { PasswordInput } from '../../../components/PasswordInput';
+import { api } from '../../../services/api';
 import * as S from './styles';
 
 interface SignUpFirstStepParams {
@@ -55,6 +56,13 @@ export const SignUpSecondStep = () => {
 
       await schema.validate({ password, passwordConfirm });
 
+      await api.post('/users', {
+        name: user.name,
+        email: user.email,
+        driver_license: user.driverLicense,
+        password,
+      });
+
       navigation.navigate('Confirmation', {
         title: 'Conta Criada!',
         message: `Agora é só fazer login\ne aproveitar`,
@@ -63,8 +71,10 @@ export const SignUpSecondStep = () => {
     } catch (error) {
       console.log(error);
       if (error instanceof Yup.ValidationError) {
-        Alert.alert('Opa!', error.message);
+        return Alert.alert('Opa!', error.message);
       }
+
+      Alert.alert('Opa!', 'Não foi possível cadastrar.');
     }
   };
 

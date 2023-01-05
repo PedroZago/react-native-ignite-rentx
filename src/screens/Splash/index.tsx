@@ -53,7 +53,7 @@ export const Splash = () => {
     };
   });
 
-  const startApp = () => navigation.navigate('Home');
+  const startApp = () => navigation.navigate('SignIn');
 
   useEffect(() => {
     splashAnimation.value = withTiming(50, { duration: 1000 }, () => {

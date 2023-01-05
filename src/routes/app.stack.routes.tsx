@@ -7,22 +7,13 @@ import { Home } from '../screens/Home';
 import { MyCars } from '../screens/MyCars';
 import { Scheduling } from '../screens/Scheduling';
 import { SchedulingDetails } from '../screens/SchedulingDetails';
-import { SignIn } from '../screens/SignIn';
-import { SignUpFirstStep } from '../screens/SignUp/SignUpFirstStep';
-import { SignUpSecondStep } from '../screens/SignUp/SignUpSecondStep';
 import { Splash } from '../screens/Splash';
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
-export const StackRoutes = () => {
+export const AppStackRoutes = () => {
   return (
-    <Navigator screenOptions={{ headerShown: false }} initialRouteName="SignIn">
-      <Screen name="SignIn" component={SignIn} />
-
-      <Screen name="SignUpFirstStep" component={SignUpFirstStep} />
-
-      <Screen name="SignUpSecondStep" component={SignUpSecondStep} />
-
+    <Navigator screenOptions={{ headerShown: false }} initialRouteName="Home">
       <Screen name="Splash" component={Splash} />
 
       <Screen

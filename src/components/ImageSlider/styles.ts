@@ -1,6 +1,8 @@
 import { Image, View, Dimensions, FlatListProps, FlatList } from 'react-native';
 import styled from 'styled-components/native';
 
+import { Photo } from '.';
+
 export const Container = styled(View)`
   width: 100%;
 `;
@@ -26,8 +28,8 @@ export const CarImage = styled(Image)`
 `;
 
 export const Carousel = styled(
-  FlatList as new (props: FlatListProps<string>) => FlatList<string>
+  FlatList as new (props: FlatListProps<Photo>) => FlatList<Photo>
 ).attrs({
   showsHorizontalScrollIndicator: false,
   horizontal: true,
-} as FlatListProps<string>)``;
+} as FlatListProps<Photo>)``;
