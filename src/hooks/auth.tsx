@@ -1,5 +1,7 @@
 import React, { createContext, useState, useContext, ReactNode } from 'react';
 
+import { database } from '../database';
+import { User as ModelUser } from '../database/model/User';
 import { api } from '../services/api';
 
 interface User {
@@ -43,6 +45,18 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const { token, user } = response.data;
 
     api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+
+    const userCollection = database.get<ModelUser>('users');
+    await database.write(async () => {
+      await userCollection.create(newUser => {
+        newUser.user_id = user.id,
+        newUser.name = user.name,
+        newUser.email = user.email,
+        newUser.driver_license = user.driver_license,
+        newUser.avatar = user.avatar,
+        newUser.token = token,
+      })
+    })
 
     setData({ token, user });
   }
