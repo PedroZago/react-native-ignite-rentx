@@ -1,4 +1,5 @@
 import { Feather } from '@expo/vector-icons';
+import { useNetInfo } from '@react-native-community/netinfo';
 import {
   NavigationProp,
   ParamListBase,
@@ -37,6 +38,10 @@ export const SchedulingDetails = () => {
     {} as RentalPeriod
   );
 
+  const [carUpdated, setCarUpdated] = useState<CardDTO>({} as CardDTO);
+
+  const netInfo = useNetInfo();
+
   const theme = useTheme();
 
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
@@ -47,26 +52,15 @@ export const SchedulingDetails = () => {
     try {
       setLoading(true);
 
-      const schedulesByCar = await api.get(`/schedules_bycars/${car.id}`);
-
-      const unavailable_dates = [
-        ...schedulesByCar.data.unavailable_dates,
-        ...dates,
-      ];
-
-      await api.post('/schedules_byuser', {
+      await api.post('/rentals', {
         user_id: 1,
-        car,
-        startDate: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
-        endDate: format(
+        car_id: car.id,
+        start_date: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
+        end_date: format(
           getPlatformDate(new Date(dates[dates.length - 1])),
           'dd/MM/yyyy'
         ),
-      });
-
-      await api.put(`/schedules_bycars/${car.id}`, {
-        id: car.id,
-        unavailable_dates,
+        total: rentTotal,
       });
 
       navigation.navigate('Confirmation', {
@@ -83,7 +77,7 @@ export const SchedulingDetails = () => {
 
   const handleGoBack = () => navigation.goBack();
 
-  const rentTotal = dates.length * car.rent.price;
+  const rentTotal = dates.length * car.price;
 
   useEffect(() => {
     setRentalPeriod({
@@ -95,6 +89,15 @@ export const SchedulingDetails = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const fetchUpdatedCar = async () => {
+      const response = await api.get<CardDTO>(`/cars/${car.id}`);
+      setCarUpdated(response.data);
+    };
+
+    if (netInfo.isConnected === true) fetchUpdatedCar();
+  }, [netInfo.isConnected]);
+
   return (
     <S.Container>
       <S.Header>
@@ -102,7 +105,13 @@ export const SchedulingDetails = () => {
       </S.Header>
 
       <S.CarImages>
-        <ImageSlider imagesUrl={car.photos} />
+        <ImageSlider
+          imagesUrl={
+            carUpdated.photos
+              ? carUpdated.photos
+              : [{ id: car.thumbnail, photo: car.thumbnail }]
+          }
+        />
       </S.CarImages>
 
       <S.Content>
@@ -114,25 +123,27 @@ export const SchedulingDetails = () => {
           </S.Description>
 
           <S.Rent>
-            <S.Period>{car.rent.period}</S.Period>
+            <S.Period>{car.period}</S.Period>
 
             <S.Price>
-              {`R$ ${car.rent.price.toLocaleString('pt-BR', {
+              {`R$ ${car.price.toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
               })}`}
             </S.Price>
           </S.Rent>
         </S.Details>
 
-        <S.CarAccessories>
-          {car.accessories.map(accessory => (
-            <Accessories
-              key={accessory.type}
-              name={accessory.name}
-              icon={getAccessoryIcon(accessory.type)}
-            />
-          ))}
-        </S.CarAccessories>
+        {!!carUpdated.accessories && (
+          <S.CarAccessories>
+            {carUpdated.accessories.map(accessory => (
+              <Accessories
+                key={accessory.type}
+                name={accessory.name}
+                icon={getAccessoryIcon(accessory.type)}
+              />
+            ))}
+          </S.CarAccessories>
+        )}
 
         <S.RentalPeriod>
           <S.CalendarIcon>
@@ -164,7 +175,7 @@ export const SchedulingDetails = () => {
           <S.RentalPriceLabel>TOTAL</S.RentalPriceLabel>
 
           <S.RentalPriceDetails>
-            <S.RentalPriceQuota>{`R$ ${car.rent.price} x${dates.length} diárias`}</S.RentalPriceQuota>
+            <S.RentalPriceQuota>{`R$ ${car.price} x${dates.length} diárias`}</S.RentalPriceQuota>
 
             <S.RentalPriceTotal>
               {`R$ ${rentTotal.toLocaleString('pt-BR', {

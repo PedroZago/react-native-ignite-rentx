@@ -4,7 +4,7 @@ import Animated from 'react-native-reanimated';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
-import { CardDTO } from '../../dtos/CardDTO';
+import { Cars as ModelCars } from '../../database/model/Cars';
 
 const ButtonAnimated = Animated.createAnimatedComponent(RectButton);
 
@@ -38,13 +38,13 @@ export const TotalCars = styled(Text)`
 `;
 
 export const CarList = styled(
-  FlatList as new (props: FlatListProps<CardDTO>) => FlatList<CardDTO>
+  FlatList as new (props: FlatListProps<ModelCars>) => FlatList<ModelCars>
 ).attrs({
   contentContainerStyle: {
     padding: 24,
   },
   showsVerticalScrollIndicator: false,
-} as FlatListProps<CardDTO>)``;
+} as FlatListProps<ModelCars>)``;
 
 export const ButtonContainer = styled(Animated.View)`
   position: absolute;

@@ -2,26 +2,25 @@ import { AntDesign } from '@expo/vector-icons';
 import {
   NavigationProp,
   ParamListBase,
+  useFocusEffect,
   useNavigation,
 } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { ListRenderItem } from 'react-native';
 import { useTheme } from 'styled-components';
 
 import { BackButton } from '../../components/BackButton';
 import { Car } from '../../components/Car';
-import { Load } from '../../components/Load';
 import { LoadAnimation } from '../../components/LoadAnimation';
-import { CardDTO } from '../../dtos/CardDTO';
+import { Cars as ModelCars } from '../../database/model/Cars';
 import { api } from '../../services/api';
 import * as S from './styles';
 
 export interface CarProps {
   id: string;
-  user_id: string;
-  car: CardDTO;
-  startDate: string;
-  endDate: string;
+  car: ModelCars;
+  start_date: string;
+  end_date: string;
 }
 
 interface ListItemProps {
@@ -46,7 +45,7 @@ export const MyCars = () => {
         <S.CarFooterTitle>Período</S.CarFooterTitle>
 
         <S.CarFooterPeriod>
-          <S.CarFooterDate>{data.startDate}</S.CarFooterDate>
+          <S.CarFooterDate>{data.start_date}</S.CarFooterDate>
 
           <AntDesign
             name="arrowright"
@@ -55,7 +54,7 @@ export const MyCars = () => {
             style={{ marginHorizontal: 10 }}
           />
 
-          <S.CarFooterDate>{data.endDate}</S.CarFooterDate>
+          <S.CarFooterDate>{data.end_date}</S.CarFooterDate>
         </S.CarFooterPeriod>
       </S.CarFooter>
     </S.CarWrapper>
@@ -65,10 +64,10 @@ export const MyCars = () => {
     <ListItem data={item} />
   );
 
-  useEffect(() => {
+  useFocusEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await api.get('/schedules_byuser?user_id=1');
+        const response = await api.get('/rentals');
 
         setCars(response.data);
       } catch (error) {

@@ -1,4 +1,5 @@
-import { Image, Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import { RFValue } from 'react-native-responsive-fontsize';
 import styled from 'styled-components/native';
 
@@ -59,7 +60,7 @@ export const Price = styled(Text)`
 
 export const Type = styled(View)``;
 
-export const CarImage = styled(Image)`
+export const CarImage = styled(FastImage)`
   width: 180px;
   height: 92px;
 `;

@@ -42,6 +42,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
           color={
             isFocused || isFilled ? theme.colors.main : theme.colors.text_detail
           }
+          autoCorrect={false}
         />
       </S.IconContainer>
 

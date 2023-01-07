@@ -91,7 +91,6 @@ export const SignIn = () => {
               <PasswordInput
                 iconName="lock"
                 placeholder="Senha"
-                autoCorrect={false}
                 onChangeText={setPassword}
                 value={password}
               />

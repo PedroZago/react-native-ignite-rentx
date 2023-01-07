@@ -6,8 +6,8 @@ import { useTheme } from 'styled-components';
 import CarSvg from '../assets/tab_car.svg';
 import HomeSvg from '../assets/tab_home.svg';
 import PeopleSvg from '../assets/tab_people.svg';
-import { Home } from '../screens/Home';
 import { MyCars } from '../screens/MyCars';
+import { Profile } from '../screens/Profile';
 import { AppStackRoutes } from './app.stack.routes';
 
 const { Navigator, Screen } = createBottomTabNavigator();
@@ -40,8 +40,8 @@ export const AppTabRoutes = () => {
       />
 
       <Screen
-        name="Profile"
-        component={Home}
+        name="MyCars"
+        component={MyCars}
         options={{
           tabBarIcon: ({ color }) => (
             <CarSvg width={24} height={24} fill={color} />
@@ -50,12 +50,13 @@ export const AppTabRoutes = () => {
       />
 
       <Screen
-        name="MyCars"
-        component={MyCars}
+        name="Profile"
+        component={Profile}
         options={{
           tabBarIcon: ({ color }) => (
             <PeopleSvg width={24} height={24} fill={color} />
           ),
+          tabBarHideOnKeyboard: true,
         }}
       />
     </Navigator>

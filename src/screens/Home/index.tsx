@@ -1,3 +1,5 @@
+import { synchronize } from '@nozbe/watermelondb/sync';
+import { useNetInfo } from '@react-native-community/netinfo';
 import {
   NavigationProp,
   ParamListBase,
@@ -9,33 +11,66 @@ import { RFValue } from 'react-native-responsive-fontsize';
 import Logo from '../../assets/logo.svg';
 import { Car } from '../../components/Car';
 import { LoadAnimation } from '../../components/LoadAnimation';
-import { CardDTO } from '../../dtos/CardDTO';
+import { database } from '../../database';
+import { Cars as ModelCars } from '../../database/model/Cars';
 import { api } from '../../services/api';
 import * as S from './styles';
 
 export const Home = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const [cars, setCars] = useState<CardDTO[]>([]);
+  const [cars, setCars] = useState<ModelCars[]>([]);
   const [loading, setLoading] = useState(true);
 
-  const handleCarDetails = (car: CardDTO) =>
+  const netInfo = useNetInfo();
+
+  const handleCarDetails = (car: ModelCars) =>
     navigation.navigate('CarDetails', { car });
 
+  const offlineSynchronize = async () => {
+    await synchronize({
+      database,
+      pullChanges: async ({ lastPulledAt }) => {
+        const { data } = await api.get(
+          `/cars/sync/pull?lastPulledVersion=${lastPulledAt ?? 0}`
+        );
+
+        const { latestVersion, changes } = data;
+
+        return { changes, timestamp: latestVersion };
+      },
+      pushChanges: async ({ changes }) => {
+        const user = changes.users;
+        await api.post('/cars/sync', user);
+      },
+    });
+  };
+
   useEffect(() => {
+    let isMounted = true;
+
     const fetchCard = async () => {
       try {
-        const response = await api.get<CardDTO[]>('/cars');
+        const userCollection = database.get<ModelCars>('cars');
+        const cars = await userCollection.query().fetch();
 
-        setCars(response.data);
+        if (isMounted) setCars(cars);
       } catch (error) {
         console.log(error);
       } finally {
-        setLoading(false);
+        if (isMounted) setLoading(false);
       }
     };
 
     fetchCard();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
+
+  useEffect(() => {
+    if (netInfo.isConnected === true) offlineSynchronize();
+  }, [netInfo.isConnected]);
 
   return (
     <S.Container>

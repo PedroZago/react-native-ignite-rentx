@@ -1,4 +1,4 @@
-import { ScrollView, ScrollViewProps, Text, View } from 'react-native';
+import { ScrollViewProps, Text, View } from 'react-native';
 import {
   getBottomSpace,
   getStatusBarHeight,
@@ -113,4 +113,11 @@ export const Footer = styled(View)`
   background-color: ${({ theme }) => theme.colors.background_primary};
 
   padding: 24px 24px ${getBottomSpace() + 24}px;
+`;
+
+export const OfflineInfo = styled(Text)`
+  font-size: ${RFValue(10)}px;
+  font-family: ${({ theme }) => theme.fonts.primary400};
+  color: ${({ theme }) => theme.colors.main};
+  text-align: center;
 `;

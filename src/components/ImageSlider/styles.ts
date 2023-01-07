@@ -1,4 +1,5 @@
-import { Image, View, Dimensions, FlatListProps, FlatList } from 'react-native';
+import { View, Dimensions, FlatListProps, FlatList } from 'react-native';
+import FastImage from 'react-native-fast-image';
 import styled from 'styled-components/native';
 
 import { Photo } from '.';
@@ -22,7 +23,7 @@ export const CarImageWrapper = styled(View)`
   align-items: center;
 `;
 
-export const CarImage = styled(Image)`
+export const CarImage = styled(FastImage)`
   width: 280px;
   height: 132px;
 `;
