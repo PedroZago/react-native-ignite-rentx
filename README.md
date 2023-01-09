@@ -19,13 +19,7 @@ Projeto de um aplicativo mobile para realizar o agendamento do aluguel de veícu
 
 ## 🎨 Layout
 
-![Home](./.github/assets/image_1.png)
-![MyCars](./.github/assets/image_2.png)
-![CarDetails](./.github/assets/image_3.png)
-![Scheduling](./.github/assets/image_4.png)
-![Scheduling](./.github/assets/image_5.png)
-![SchedulingDetails](./.github/assets/image_6.png)
-![SchedulingComplete](./.github/assets/image_7.png)
+![App](./.github/assets/full_app.gif)
 
 ---
 

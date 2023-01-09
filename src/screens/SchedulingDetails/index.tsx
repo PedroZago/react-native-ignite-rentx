@@ -6,6 +6,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import React, { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -97,6 +98,8 @@ export const SchedulingDetails = () => {
 
   return (
     <S.Container>
+      <StatusBar style="dark" backgroundColor="transparent" translucent />
+
       <S.Header>
         <BackButton onPress={handleGoBack} />
       </S.Header>

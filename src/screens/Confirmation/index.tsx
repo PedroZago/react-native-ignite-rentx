@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { useWindowDimensions } from 'react-native';
 
@@ -30,6 +31,8 @@ export const Confirmation = () => {
 
   return (
     <S.Container>
+      <StatusBar style="light" backgroundColor="transparent" translucent />
+
       <LogoSvg width={width} />
 
       <S.Content>

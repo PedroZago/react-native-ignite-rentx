@@ -4,6 +4,7 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
+import { StatusBar } from 'expo-status-bar';
 import React, { useState } from 'react';
 import { DateData } from 'react-native-calendars';
 import { useTheme } from 'styled-components';
@@ -76,6 +77,8 @@ export const Scheduling = () => {
 
   return (
     <S.Container>
+      <StatusBar style="light" backgroundColor="transparent" translucent />
+
       <S.Header>
         <S.ButtonContainer>
           <BackButton color={theme.colors.shape} onPress={handleGoBack} />
