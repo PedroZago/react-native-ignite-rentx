@@ -6,7 +6,7 @@
 
 ## 💻 Sobre o projeto
 
-Projeto de um aplicativo mobile para realizar o agendamento do aluguel de veículos, desenvolvido durante o **Ignite de ReactJS** oferecida pela [Rocketseat](https://www.rocketseat.com.br/ignite/).
+Projeto de um aplicativo mobile para realizar o agendamento do aluguel de veículos, com foco no offline-first, desenvolvido durante o **Ignite de ReactJS** oferecida pela [Rocketseat](https://www.rocketseat.com.br/ignite/).
 
 ---
 
@@ -14,6 +14,9 @@ Projeto de um aplicativo mobile para realizar o agendamento do aluguel de veícu
 
 - [x] Realizar novos agendamentos;
 - [x] Listagem dos agendamentos anteriores;
+- [x] Arquitetura Offline first;
+- [x] Login e cadastro de usuários;
+- [x] Alteração de dados cadastrais.
 
 ---
 
@@ -40,13 +43,10 @@ $ git clone git@github.com:PedroZago/react-native-ignite-rentx.git
 $ cd rentx
 # Instale as dependências
 $ yarn install
-# Execute a aplicação em modo de desenvolvimento
-$ yarn api
-# Inicia o json-server
-$ yarn start
 # Inicia um servidor do packager Metro
-$ yarn android "or ios"
+$ yarn start
 # Abre o emulador e executa a aplicação
+$ yarn android "or ios"
 ```
 
 ---
