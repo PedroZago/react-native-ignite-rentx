@@ -8,6 +8,8 @@
 
 Projeto de um aplicativo mobile para realizar o agendamento do aluguel de veículos, com foco no offline-first, desenvolvido durante o **Ignite de ReactJS** oferecida pela [Rocketseat](https://www.rocketseat.com.br/ignite/).
 
+A versão sem a **Arquitetura Offline first** pode ser acessada **[clicando aqui](https://github.com/PedroZago/react-native-ignite-rentx/tree/main)**.
+
 ---
 
 ## ⚙️ Funcionalidades
