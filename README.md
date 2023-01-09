@@ -49,6 +49,12 @@ $ yarn start
 $ yarn android "or ios"
 ```
 
+#### 🧭 Rodando a API (Back)
+
+A API está disponível no repositório do incrível professor do curso de React Native da Rockeseat [Rodrigo Gonçalves](https://github.com/rodrigorgtic).
+
+Repositório: [rentx-ignite](https://github.com/rodrigorgtic/rentx-ignite).
+
 ---
 
 ## 🛠 Tecnologias
