@@ -46,13 +46,12 @@ $ git clone git@github.com:PedroZago/react-native-ignite-myskills.git
 $ cd rentx
 # Instale as dependências
 $ yarn install
-# Execute a aplicação em modo de desenvolvimento
-$ yarn api
 # Inicia o json-server
-$ yarn start
+$ yarn api
 # Inicia um servidor do packager Metro
-$ yarn android "or ios"
+$ yarn start
 # Abre o emulador e executa a aplicação
+$ yarn android "or ios"
 ```
 
 ---
