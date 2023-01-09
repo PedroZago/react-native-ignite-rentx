@@ -4,7 +4,6 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import { format } from 'date-fns';
 import React, { useState } from 'react';
 import { DateData } from 'react-native-calendars';
 import { useTheme } from 'styled-components';
@@ -15,6 +14,7 @@ import { Button } from '../../components/Button';
 import { Calendar, MarkedDates } from '../../components/Calendar';
 import { generateInterval } from '../../components/Calendar/generateInterval';
 import { CardDTO } from '../../dtos/CardDTO';
+import { formattedDate } from '../../utils/formattedDate';
 import { getPlatformDate } from '../../utils/getPlatformDate';
 import * as S from './styles';
 
@@ -69,8 +69,8 @@ export const Scheduling = () => {
     const endDate = Object.keys(interval)[Object.keys(interval).length - 1];
 
     setRentalPeriod({
-      start: format(getPlatformDate(new Date(firstDate)), 'dd/MM/yyyy'),
-      end: format(getPlatformDate(new Date(endDate)), 'dd/MM/yyyy'),
+      start: formattedDate(getPlatformDate(new Date(firstDate))),
+      end: formattedDate(getPlatformDate(new Date(endDate))),
     });
   };
 

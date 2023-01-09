@@ -19,7 +19,7 @@ import { BackButton } from '../../../components/BackButton';
 import { Bullet } from '../../../components/Bullet';
 import { Button } from '../../../components/Button';
 import { PasswordInput } from '../../../components/PasswordInput';
-import { api } from '../../../services/api';
+import { postUsers, PostUsersRequest } from '../../../services/postUsers';
 import * as S from './styles';
 
 interface SignUpFirstStepParams {
@@ -56,12 +56,14 @@ export const SignUpSecondStep = () => {
 
       await schema.validate({ password, passwordConfirm });
 
-      await api.post('/users', {
+      const dataRequest: PostUsersRequest = {
         name: user.name,
         email: user.email,
         driver_license: user.driverLicense,
         password,
-      });
+      };
+
+      await postUsers(dataRequest);
 
       navigation.navigate('Confirmation', {
         title: 'Conta Criada!',

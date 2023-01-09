@@ -1,6 +1,10 @@
 import { Feather } from '@expo/vector-icons';
 import { useNetInfo } from '@react-native-community/netinfo';
-import { useNavigation } from '@react-navigation/native';
+import {
+  NavigationProp,
+  ParamListBase,
+  useNavigation,
+} from '@react-navigation/native';
 import * as ImagePicker from 'expo-image-picker';
 import React, { useState } from 'react';
 import { Alert, Keyboard, KeyboardAvoidingView } from 'react-native';
@@ -13,6 +17,7 @@ import { Button } from '../../components/Button';
 import { Input } from '../../components/Input';
 import { PasswordInput } from '../../components/PasswordInput';
 import { useAuth } from '../../hooks/auth';
+import { putUser, PutUserRequest } from '../../services/putUser';
 import * as S from './styles';
 
 type OptionForm = 'dataEdit' | 'passwordEdit';
@@ -28,8 +33,12 @@ export const Profile = () => {
   const [name, setName] = useState(user.name);
   const [driverLicense, setDriverLicense] = useState(user.driver_license);
 
+  const [oldPassword, setOldPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [newPasswordConfirm, setNewPasswordConfirm] = useState('');
+
   const theme = useTheme();
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const handleGoBack = () => navigation.goBack();
 
@@ -77,7 +86,56 @@ export const Profile = () => {
         token: user.token,
       });
 
-      Alert.alert('Sucesso!', 'Perfil atualizado com sucesso!.');
+      Alert.alert('Sucesso!', 'Perfil atualizado com sucesso!.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Home'),
+        },
+      ]);
+    } catch (error) {
+      console.log(error);
+      if (error instanceof Yup.ValidationError) {
+        return Alert.alert('Opa!', error.message);
+      }
+
+      Alert.alert('Opa!', 'Não foi possível atualizar o perfil.');
+    }
+  };
+
+  const handleUpdatePassword = async () => {
+    try {
+      const schema = Yup.object().shape({
+        oldPassword: Yup.string()
+          .required('Senha atual obrigatória')
+          .min(8, 'No mínimo 8 caracteres'),
+        newPassword: Yup.string()
+          .required('Senha nova obrigatória')
+          .min(8, 'No mínimo 8 caracteres'),
+        newPasswordConfirm: Yup.string().oneOf(
+          [null, Yup.ref('newPassword')],
+          'As senhas novas precisam ser iguais'
+        ),
+      });
+
+      const data = { oldPassword, newPassword, newPasswordConfirm };
+      await schema.validate(data);
+
+      const dataRequest: PutUserRequest = {
+        name,
+        driver_license: driverLicense,
+        avatar,
+        password: newPasswordConfirm,
+        old_password: oldPassword,
+      };
+
+      await putUser(dataRequest);
+
+      Alert.alert('Sucesso!', 'Senha atualizada com sucesso!.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.navigate('Home'),
+        },
+      ]);
     } catch (error) {
       console.log(error);
       if (error instanceof Yup.ValidationError) {
@@ -187,21 +245,43 @@ export const Profile = () => {
               </S.Section>
             ) : (
               <S.Section>
-                <PasswordInput iconName="lock" placeholder="Senha atual" />
+                <PasswordInput
+                  iconName="lock"
+                  placeholder="Senha atual"
+                  onChangeText={setOldPassword}
+                  value={oldPassword}
+                />
 
                 <S.Divider />
 
-                <PasswordInput iconName="lock" placeholder="Nova senha" />
+                <PasswordInput
+                  iconName="lock"
+                  placeholder="Nova senha"
+                  onChangeText={setNewPassword}
+                  value={newPassword}
+                />
 
                 <S.Divider />
 
-                <PasswordInput iconName="lock" placeholder="Repetir senha" />
+                <PasswordInput
+                  iconName="lock"
+                  placeholder="Repetir senha"
+                  onChangeText={setNewPasswordConfirm}
+                  value={newPasswordConfirm}
+                />
               </S.Section>
             )}
 
             <S.Divider />
 
-            <Button title="Salvar alterações" onPress={handleUpdateProfile} />
+            <Button
+              title="Salvar alterações"
+              onPress={
+                option === 'dataEdit'
+                  ? handleUpdateProfile
+                  : handleUpdatePassword
+              }
+            />
           </S.Content>
         </S.Container>
       </TouchableWithoutFeedback>

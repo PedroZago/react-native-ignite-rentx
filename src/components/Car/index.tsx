@@ -1,12 +1,12 @@
 import { useNetInfo } from '@react-native-community/netinfo';
 import React from 'react';
-import { TouchableOpacityProps } from 'react-native';
+import { RectButtonProps } from 'react-native-gesture-handler';
 
 import { Cars as ModelCars } from '../../database/model/Cars';
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import * as S from './styles';
 
-interface CarProps extends TouchableOpacityProps {
+interface CarProps extends RectButtonProps {
   data: ModelCars;
 }
 

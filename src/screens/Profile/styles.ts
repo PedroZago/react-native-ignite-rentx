@@ -72,6 +72,8 @@ export const EditPhotoButton = styled(RectButton)`
 export const Content = styled(View)`
   padding: 0 24px;
   margin-top: 122px;
+
+  padding-bottom: 8px;
 `;
 
 export const Options = styled(View)`

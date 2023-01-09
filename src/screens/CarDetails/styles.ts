@@ -20,6 +20,7 @@ export const Header = styled(View)`
   position: absolute;
   margin-top: ${getStatusBarHeight() + 18}px;
   margin-left: 24px;
+  z-index: 1;
 `;
 
 export const AnimatedViewCarImages = styled(Animated.View)``;

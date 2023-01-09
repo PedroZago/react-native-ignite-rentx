@@ -3,21 +3,17 @@ import React from 'react';
 
 import { CarDetails } from '../screens/CarDetails';
 import { Confirmation } from '../screens/Confirmation';
-import { Home } from '../screens/Home';
-import { MyCars } from '../screens/MyCars';
+// import { Home } from '../screens/Home';
 import { Scheduling } from '../screens/Scheduling';
 import { SchedulingDetails } from '../screens/SchedulingDetails';
+import { AppTabRoutes } from './app.tab.routes';
 
 const { Navigator, Screen } = createNativeStackNavigator();
 
 export const AppStackRoutes = () => {
   return (
-    <Navigator screenOptions={{ headerShown: false }} initialRouteName="Home">
-      <Screen
-        name="Home"
-        component={Home}
-        options={{ gestureEnabled: false }}
-      />
+    <Navigator screenOptions={{ headerShown: false }}>
+      <Screen name="AppTabRoutes" component={AppTabRoutes} />
 
       <Screen name="CarDetails" component={CarDetails} />
 
@@ -26,8 +22,6 @@ export const AppStackRoutes = () => {
       <Screen name="Confirmation" component={Confirmation} />
 
       <Screen name="SchedulingDetails" component={SchedulingDetails} />
-
-      <Screen name="MyCars" component={MyCars} />
     </Navigator>
   );
 };

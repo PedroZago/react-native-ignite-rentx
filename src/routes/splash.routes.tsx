@@ -3,7 +3,7 @@ import React from 'react';
 
 import { useAuth } from '../hooks/auth';
 import { Splash } from '../screens/Splash';
-import { AppTabRoutes } from './app.tab.routes';
+import { AppStackRoutes } from './app.stack.routes';
 import { AuthRoutes } from './auth.routes';
 
 const { Navigator, Screen } = createNativeStackNavigator();
@@ -15,7 +15,10 @@ export const SplashRoutes = () => {
     <Navigator screenOptions={{ headerShown: false }} initialRouteName="Splash">
       <Screen name="Splash" component={Splash} />
 
-      <Screen name="Home" component={user.id ? AppTabRoutes : AuthRoutes} />
+      <Screen
+        name="AppStacks"
+        component={user.id ? AppStackRoutes : AuthRoutes}
+      />
     </Navigator>
   );
 };

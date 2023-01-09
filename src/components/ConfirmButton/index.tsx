@@ -1,9 +1,10 @@
 import React from 'react';
 import { TouchableOpacityProps } from 'react-native';
+import { RectButtonProps } from 'react-native-gesture-handler';
 
 import * as S from './styles';
 
-interface ConfirmButtonProps extends TouchableOpacityProps {
+interface ConfirmButtonProps extends RectButtonProps {
   title: string;
 }
 

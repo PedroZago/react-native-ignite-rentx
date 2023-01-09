@@ -1,6 +1,7 @@
 import {
   NavigationProp,
   ParamListBase,
+  StackActions,
   useNavigation,
 } from '@react-navigation/native';
 import React, { useEffect } from 'react';
@@ -19,7 +20,7 @@ import * as S from './styles';
 
 export const Splash = () => {
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
-  const splashAnimation = useSharedValue(0); // 0 -> 50
+  const splashAnimation = useSharedValue(0);
 
   const brandStyle = useAnimatedStyle(() => {
     return {
@@ -53,13 +54,23 @@ export const Splash = () => {
     };
   });
 
-  const startApp = () => navigation.navigate('SignIn');
+  // const startApp = () => navigation.dispatch(StackActions.replace('AppStacks'));
+  const startApp = () => navigation.navigate('AppStacks');
 
   useEffect(() => {
+    let mounted = true;
+
     splashAnimation.value = withTiming(50, { duration: 1000 }, () => {
-      'worklet';
-      runOnJS(startApp)();
+      if (mounted) {
+        // eslint-disable-next-line no-unused-expressions, prettier/prettier
+        ('worklet');
+        runOnJS(startApp)();
+      }
     });
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
   return (

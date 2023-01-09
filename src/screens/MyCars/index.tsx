@@ -13,7 +13,8 @@ import { BackButton } from '../../components/BackButton';
 import { Car } from '../../components/Car';
 import { LoadAnimation } from '../../components/LoadAnimation';
 import { Cars as ModelCars } from '../../database/model/Cars';
-import { api } from '../../services/api';
+import { getRentals } from '../../services/getRentals';
+import { formattedDate } from '../../utils/formattedDate';
 import * as S from './styles';
 
 export interface CarProps {
@@ -45,7 +46,7 @@ export const MyCars = () => {
         <S.CarFooterTitle>Período</S.CarFooterTitle>
 
         <S.CarFooterPeriod>
-          <S.CarFooterDate>{data.start_date}</S.CarFooterDate>
+          <S.CarFooterDate>{formattedDate(data.start_date)}</S.CarFooterDate>
 
           <AntDesign
             name="arrowright"
@@ -54,7 +55,7 @@ export const MyCars = () => {
             style={{ marginHorizontal: 10 }}
           />
 
-          <S.CarFooterDate>{data.end_date}</S.CarFooterDate>
+          <S.CarFooterDate>{formattedDate(data.end_date)}</S.CarFooterDate>
         </S.CarFooterPeriod>
       </S.CarFooter>
     </S.CarWrapper>
@@ -67,9 +68,9 @@ export const MyCars = () => {
   useFocusEffect(() => {
     const fetchCard = async () => {
       try {
-        const response = await api.get('/rentals');
+        const data = await getRentals();
 
-        setCars(response.data);
+        setCars(data);
       } catch (error) {
         console.log(error);
       } finally {
@@ -78,7 +79,7 @@ export const MyCars = () => {
     };
 
     fetchCard();
-  }, []);
+  });
 
   return (
     <S.Container>

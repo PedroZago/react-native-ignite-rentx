@@ -6,7 +6,6 @@ import {
   useNavigation,
   useRoute,
 } from '@react-navigation/native';
-import { format } from 'date-fns';
 import React, { useState, useEffect } from 'react';
 import { Alert } from 'react-native';
 import { RFValue } from 'react-native-responsive-fontsize';
@@ -18,6 +17,8 @@ import { Button } from '../../components/Button';
 import { ImageSlider } from '../../components/ImageSlider';
 import { CardDTO } from '../../dtos/CardDTO';
 import { api } from '../../services/api';
+import { getCarById } from '../../services/getCarById';
+import { formattedDate } from '../../utils/formattedDate';
 import { getAccessoryIcon } from '../../utils/getAccessoryIcon';
 import { getPlatformDate } from '../../utils/getPlatformDate';
 import * as S from './styles';
@@ -52,16 +53,15 @@ export const SchedulingDetails = () => {
     try {
       setLoading(true);
 
-      await api.post('/rentals', {
+      const dataRequest = {
         user_id: 1,
         car_id: car.id,
-        start_date: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
-        end_date: format(
-          getPlatformDate(new Date(dates[dates.length - 1])),
-          'dd/MM/yyyy'
-        ),
+        start_date: getPlatformDate(new Date(dates[0])),
+        end_date: getPlatformDate(new Date(dates[dates.length - 1])),
         total: rentTotal,
-      });
+      };
+
+      await api.post('/rentals', dataRequest);
 
       navigation.navigate('Confirmation', {
         title: 'Carro alugado!',
@@ -69,8 +69,8 @@ export const SchedulingDetails = () => {
         nextScreenRoute: 'Home',
       });
     } catch (error) {
-      Alert.alert('Não foi possível confirmar o agendamento.');
       console.log(error);
+      Alert.alert('Não foi possível confirmar o agendamento.');
       setLoading(false);
     }
   };
@@ -81,18 +81,15 @@ export const SchedulingDetails = () => {
 
   useEffect(() => {
     setRentalPeriod({
-      start: format(getPlatformDate(new Date(dates[0])), 'dd/MM/yyyy'),
-      end: format(
-        getPlatformDate(new Date(dates[dates.length - 1])),
-        'dd/MM/yyyy'
-      ),
+      start: formattedDate(getPlatformDate(new Date(dates[0]))),
+      end: formattedDate(getPlatformDate(new Date(dates[dates.length - 1]))),
     });
   }, []);
 
   useEffect(() => {
     const fetchUpdatedCar = async () => {
-      const response = await api.get<CardDTO>(`/cars/${car.id}`);
-      setCarUpdated(response.data);
+      const data = await getCarById({ carId: car.id });
+      setCarUpdated(data);
     };
 
     if (netInfo.isConnected === true) fetchUpdatedCar();

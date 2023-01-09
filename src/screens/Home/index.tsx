@@ -3,9 +3,10 @@ import { useNetInfo } from '@react-native-community/netinfo';
 import {
   NavigationProp,
   ParamListBase,
+  useFocusEffect,
   useNavigation,
 } from '@react-navigation/native';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { RFValue } from 'react-native-responsive-fontsize';
 
 import Logo from '../../assets/logo.svg';
@@ -13,26 +14,39 @@ import { Car } from '../../components/Car';
 import { LoadAnimation } from '../../components/LoadAnimation';
 import { database } from '../../database';
 import { Cars as ModelCars } from '../../database/model/Cars';
-import { api } from '../../services/api';
+import { getCarsSync } from '../../services/getCarsSync';
+import { postUsersSync } from '../../services/postUsersSync';
 import * as S from './styles';
 
 export const Home = () => {
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
   const [cars, setCars] = useState<ModelCars[]>([]);
   const [loading, setLoading] = useState(true);
 
   const netInfo = useNetInfo();
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const synchronizing = useRef(false);
 
   const handleCarDetails = (car: ModelCars) =>
-    navigation.navigate('CarDetails', { car });
+    navigation.navigate('CarDetails', { carId: car._raw.id });
+
+  const fetchCars = async () => {
+    try {
+      const userCollection = database.get<ModelCars>('cars');
+      const cars = await userCollection.query().fetch();
+
+      setCars(cars);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const offlineSynchronize = async () => {
     await synchronize({
       database,
       pullChanges: async ({ lastPulledAt }) => {
-        const { data } = await api.get(
-          `/cars/sync/pull?lastPulledVersion=${lastPulledAt ?? 0}`
-        );
+        const data = await getCarsSync({ lastPulledAt });
 
         const { latestVersion, changes } = data;
 
@@ -40,37 +54,44 @@ export const Home = () => {
       },
       pushChanges: async ({ changes }) => {
         const user = changes.users;
-        await api.post('/cars/sync', user);
+        if (user) await postUsersSync(user);
       },
     });
+
+    await fetchCars();
   };
 
   useEffect(() => {
     let isMounted = true;
 
-    const fetchCard = async () => {
-      try {
-        const userCollection = database.get<ModelCars>('cars');
-        const cars = await userCollection.query().fetch();
-
-        if (isMounted) setCars(cars);
-      } catch (error) {
-        console.log(error);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    };
-
-    fetchCard();
+    if (isMounted) {
+      fetchCars();
+    }
 
     return () => {
       isMounted = false;
     };
   }, []);
 
-  useEffect(() => {
-    if (netInfo.isConnected === true) offlineSynchronize();
-  }, [netInfo.isConnected]);
+  useFocusEffect(
+    useCallback(() => {
+      const syncChanges = async () => {
+        if (netInfo.isConnected && !synchronizing.current) {
+          synchronizing.current = true;
+
+          try {
+            await offlineSynchronize();
+          } catch (error) {
+            console.log(error);
+          } finally {
+            synchronizing.current = false;
+          }
+        }
+      };
+
+      syncChanges();
+    }, [netInfo.isConnected])
+  );
 
   return (
     <S.Container>

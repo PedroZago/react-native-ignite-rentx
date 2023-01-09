@@ -5,10 +5,12 @@ import React, {
   ReactNode,
   useEffect,
 } from 'react';
+import { Alert } from 'react-native';
 
 import { database } from '../database';
 import { User as ModelUser } from '../database/model/User';
 import { api } from '../services/api';
+import { postSessions } from '../services/postSessions';
 
 interface User {
   id: string;
@@ -45,25 +47,25 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   async function signIn({ email, password }: SignInCredentials): Promise<void> {
     try {
-      const response = await api.post<{ token: string; user: User }>(
-        '/sessions',
-        {
-          email,
-          password,
-        }
-      );
+      const data = await postSessions({ email, password });
+
+      if (data.message === 'Email or password incorret!') {
+        setIsLogging(false);
+        return Alert.alert('Erro na autenticação', 'E-mail ou senha inválido!');
+      }
 
       setIsLogging(false);
 
-      const { token, user } = response.data;
+      const { token, user } = data;
 
       api.defaults.headers.common['Authorization'] = `Bearer ${token}`;
 
       const userCollection = database.get<ModelUser>('users');
       await database.write(async () => {
         const dataUser = await userCollection.create(newUser => {
-          // eslint-disable-next-line no-unused-expressions, no-sequences
-          (newUser.user_id = user.id),
+          // eslint-disable-next-line no-unused-expressions, no-sequences, no-self-assign
+          (newUser.id = newUser.id),
+            (newUser.user_id = user.id),
             (newUser.name = user.name),
             (newUser.email = user.email),
             (newUser.driver_license = user.driver_license),
@@ -76,7 +78,8 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
     } catch (error) {
       console.log(error);
-      throw new Error(error as any);
+      setIsLogging(false);
+      Alert.alert('Erro na autenticação', 'Não foi possível realizar o login!');
     }
   }
 
@@ -91,7 +94,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setData({} as User);
     } catch (error) {
       console.log(error);
-      throw new Error(error as any);
+      Alert.alert(
+        'Erro na operação',
+        'Não foi possível sair do aplicativo, tente novamente mais tarde!'
+      );
     }
   }
 
@@ -112,7 +118,10 @@ const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
     } catch (error) {
       console.log(error);
-      throw new Error(error as any);
+      Alert.alert(
+        'Erro na atualização',
+        'Não foi possível atualizar os dados do usuário!'
+      );
     }
   }
 

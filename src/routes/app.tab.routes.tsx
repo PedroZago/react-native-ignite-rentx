@@ -1,14 +1,14 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react';
-import { Platform } from 'react-native';
 import { useTheme } from 'styled-components';
 
 import CarSvg from '../assets/tab_car.svg';
 import HomeSvg from '../assets/tab_home.svg';
 import PeopleSvg from '../assets/tab_people.svg';
+import { Home } from '../screens/Home';
 import { MyCars } from '../screens/MyCars';
 import { Profile } from '../screens/Profile';
-import { AppStackRoutes } from './app.stack.routes';
+import { isIOS } from '../utils/isIOS';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -23,7 +23,7 @@ export const AppTabRoutes = () => {
         tabBarInactiveTintColor: theme.colors.text_detail,
         tabBarShowLabel: false,
         tabBarStyle: {
-          paddingVertical: Platform.OS === 'ios' ? 20 : 0,
+          paddingVertical: isIOS() ? 20 : 0,
           height: 78,
           backgroundColor: theme.colors.background_primary,
         },
@@ -31,7 +31,7 @@ export const AppTabRoutes = () => {
     >
       <Screen
         name="Home"
-        component={AppStackRoutes}
+        component={Home}
         options={{
           tabBarIcon: ({ color }) => (
             <HomeSvg width={24} height={24} fill={color} />

@@ -1,11 +1,12 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import React from 'react';
+import { TouchableOpacityProps } from 'react-native';
 import { BorderlessButtonProps } from 'react-native-gesture-handler';
 import { useTheme } from 'styled-components';
 
 import * as S from './styles';
 
-interface BackButtonProps extends BorderlessButtonProps {
+interface BackButtonProps extends TouchableOpacityProps {
   color?: string;
 }
 
