@@ -1,7 +1,6 @@
 import {
   NavigationProp,
   ParamListBase,
-  StackActions,
   useNavigation,
 } from '@react-navigation/native';
 import React, { useEffect } from 'react';
@@ -54,7 +53,6 @@ export const Splash = () => {
     };
   });
 
-  // const startApp = () => navigation.dispatch(StackActions.replace('AppStacks'));
   const startApp = () => navigation.navigate('AppStacks');
 
   useEffect(() => {
